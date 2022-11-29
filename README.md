@@ -1,34 +1,51 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# zod-typescript-types
 
-## Getting Started
+This repository contains multiple examples that show how to use [`zod`](https://github.com/colinhacks/zod) library to better handle TypeScript types.
 
-First, run the development server:
+Following is currently included:
 
-```bash
-npm run dev
-# or
-yarn dev
+- Working with JSON API responses
+- Working with form input/output data
+
+## Working with JSON API responses
+
+### Problem
+
+- JSON API responses can't contain data types like `Date`, `Map`, etc.
+- Using same TS type for all JSON API responses can be insufficient. A response can contain just a subset of data.
+- Data has to be preprocessed before using a TS type.
+
+Response A:
+
+```json
+{
+  "name": "John Doe",
+  "age": 30,
+  "birthday": "2022-11-17T19:36:37.597Z"
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Response B:
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```json
+{
+  "name": "John Doe",
+  "age": 30
+}
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+TypeScript code:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```typescript
+type User = {
+  name: string;
+  age: number;
+  birthday: Date;
+};
 
-## Learn More
+const respA = convertObj(/* Response A */) as User;
+const respB = convertObj(/* Response B */) as User;
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+respA.birthday; // returns a value
+respB.birthday; // undefined
+```
