@@ -9,6 +9,10 @@ Following is included:
 
 ## How to use
 
+To get started execute `pnpm install` to install dependencies. Then run `pnpm dev` to start the application.
+
+The application is separated in TypeScript and `zod` sections. All related files are either located in `typescript/*` or `zod/*` folders.
+
 ## Working with JSON data
 
 ### Problem

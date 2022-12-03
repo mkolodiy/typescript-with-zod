@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { ZodError } from 'zod';
-import { AdditionalFieldsForm } from '../../components/additional-fields-form';
-import { UserCard } from '../../components/user-card';
-import { getUserResponseSchema } from '../../user';
+import { AdditionalFieldsForm } from '../../../zod/components/additional-fields-form';
+import { UserCard } from '../../../zod/components/user-card';
+import { getUserResponseSchema } from '../../../zod/user';
 
 export default function User() {
   const router = useRouter();
@@ -19,16 +19,7 @@ export default function User() {
       const response = await fetch(`/api/users/${router.query['id']}`, {
         signal,
       });
-
-      // Option 1
-      // const text = await response.text();
-      // const converted = superjson.parse(
-      //   `{"json":${text},"meta":{"values":{"birthday":["Date"]}}}`
-      // );
-
-      // Option 2
       const json = await response.json();
-
       return getUserResponseSchema.parse(json);
     },
     retry: false,

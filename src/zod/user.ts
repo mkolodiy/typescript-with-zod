@@ -64,30 +64,3 @@ export type AdditionalFields = z.infer<typeof additionalFieldsSchema>;
 // const user: Required<User> = {}; // Create a user with all fields required
 
 // const user: Omit<User, 'address'> = {}; // Create a user without address field
-
-export function castObj(obj: any) {
-  const objCopy = cloneDeep(obj);
-  for (const [key, value] of Object.entries(objCopy)) {
-    if (value === null) {
-      continue;
-    }
-
-    if (typeof value === 'string') {
-      const isDate = isValid(parseISO(value));
-      if (isDate) {
-        const dateCast = parseISO(value);
-        objCopy[key] = dateCast;
-      }
-    }
-
-    if (typeof value === 'object') {
-      objCopy[key] = castObj(value);
-    }
-  }
-
-  return objCopy;
-}
-
-export function castArr(arr: any[]) {
-  return arr.map((entry) => castObj(entry));
-}

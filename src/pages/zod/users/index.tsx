@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { ZodError } from 'zod';
-import { getUsersResponseSchema } from '../../user';
-import { UserCard } from '../../components/user-card';
+import { getUsersResponseSchema } from '../../../zod/user';
+import { UserCard } from '../../../zod/components/user-card';
 import { useRouter } from 'next/router';
 
 export default function Users() {
@@ -15,16 +15,7 @@ export default function Users() {
     queryKey: ['users'],
     queryFn: async ({ signal }) => {
       const response = await fetch('/api/users', { signal });
-
-      // Option 1
-      // const text = await response.text();
-      // const converted = superjson.parse(
-      //   `{"json":${text},"meta":{"values":{"0.birthday":["Date"], "1.birthday":["Date"]}}}`
-      // );
-
-      // Option 2
       const json = await response.json();
-
       return getUsersResponseSchema.parse(json);
     },
     retry: false,
@@ -50,7 +41,10 @@ export default function Users() {
   return (
     <div>
       {users.map((user) => (
-        <div onClick={() => router.push(`/users/${user.id}`)} key={user.id}>
+        <div
+          onClick={() => router.push(`/typescript/users/${user.id}`)}
+          key={user.id}
+        >
           <UserCard user={user} />
         </div>
       ))}

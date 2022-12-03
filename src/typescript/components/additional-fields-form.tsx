@@ -1,44 +1,32 @@
 import { parseISO, isValid } from 'date-fns';
 import { Formik, FormikProps } from 'formik';
 import { ChangeEventHandler } from 'react';
-import { z, ZodError } from 'zod';
-import { type User, additionalFieldsSchema } from '../user';
-import { DateInput } from './date-input';
-import { NumberInput } from './number-input';
+import { number, z, ZodError } from 'zod';
+import type { AdditionalFields } from '../user';
+import { DateInput } from '../../common/components/date-input';
+import { NumberInput } from '../../common/components/number-input';
+import { cloneDeep } from 'lodash';
 
-const inputSchema = additionalFieldsSchema.augment({
-  fieldNumber: z.preprocess(
-    (value) => (value === null ? '' : value),
-    z.number().or(z.string().length(0))
-  ),
-  fieldString: z.preprocess(
-    (value) => (value === null ? '' : value),
-    z.string().or(z.string().length(0))
-  ),
-  fieldDate: z.preprocess(
-    (value) => (value === null ? '' : value),
-    z.date().or(z.string().length(0))
-  ),
+const inputSchema = z.object({
+  fieldNumber: z.number().or(z.string().length(0)),
+  fieldNumberWritable: z.boolean(),
+  fieldString: z.string().or(z.string().length(0)),
+  fieldStringWritable: z.boolean(),
+  fieldDate: z.date().or(z.string().length(0)),
+  fieldDateWritable: z.boolean(),
 });
 
-const outputSchema = additionalFieldsSchema.augment({
-  fieldNumber: z.preprocess(
-    (value) => (value === '' ? null : Number(value)),
-    z.number().nullable()
-  ),
-  fieldString: z.preprocess(
-    (value) => (value === '' ? null : value),
-    z.string().nullable()
-  ),
-  fieldDate: z.preprocess(
-    (value) => (value === '' ? null : value),
-    z.date().nullable()
-  ),
+const outputSchema = inputSchema.augment({
+  fieldNumber: z.number().nullable(),
+  fieldString: z.string().nullable(),
+  fieldDate: z.date().nullable(),
 });
 
-type FormValues = z.infer<typeof inputSchema>;
+type InputValues = z.infer<typeof inputSchema>;
 
-function validate(values: FormValues) {
+type OutputValue = z.infer<typeof outputSchema>;
+
+function validate(values: InputValues) {
   try {
     inputSchema.parse(values);
   } catch (error) {
@@ -51,16 +39,37 @@ function validate(values: FormValues) {
 }
 
 type Props = {
-  user: User;
+  additionalFields: AdditionalFields;
 };
 
-function getInitialValues(user: User) {
-  return inputSchema.parse(user.additionalFields);
+function getInitialValues(additionalFields: AdditionalFields): InputValues {
+  return {
+    ...additionalFields,
+    fieldNumber:
+      additionalFields.fieldNumber === null ? '' : additionalFields.fieldNumber,
+    fieldString:
+      additionalFields.fieldString === null ? '' : additionalFields.fieldString,
+    fieldDate:
+      additionalFields.fieldDate === null ? '' : additionalFields.fieldDate,
+  };
 }
 
-export function AdditionalFieldsForm({ user }: Props) {
-  const handleFormikOnSubmit = (values: FormValues) => {
-    console.log(outputSchema.parse(values));
+export function AdditionalFieldsForm({ additionalFields }: Props) {
+  const handleFormikOnSubmit = (values: InputValues) => {
+    const outputData: OutputValue = {
+      ...values,
+      fieldNumber:
+        values.fieldNumber === '' || typeof values.fieldNumber === 'string'
+          ? null
+          : values.fieldNumber,
+      fieldString: values.fieldString === '' ? null : values.fieldString,
+      fieldDate:
+        values.fieldDate === '' || typeof values.fieldDate === 'string'
+          ? null
+          : values.fieldDate,
+    };
+
+    console.log(outputData);
   };
 
   const renderForm = ({
@@ -71,7 +80,7 @@ export function AdditionalFieldsForm({ user }: Props) {
     touched,
     errors,
     setFieldValue,
-  }: FormikProps<FormValues>) => {
+  }: FormikProps<InputValues>) => {
     const handleOnChangeDate: ChangeEventHandler<HTMLInputElement> = (e) => {
       const value = e.target.value;
       const date = parseISO(value);
@@ -136,7 +145,7 @@ export function AdditionalFieldsForm({ user }: Props) {
     <Formik
       validate={validate}
       onSubmit={handleFormikOnSubmit}
-      initialValues={getInitialValues(user)}
+      initialValues={getInitialValues(additionalFields)}
     >
       {renderForm}
     </Formik>
