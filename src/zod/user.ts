@@ -29,10 +29,11 @@ export const userSchema = z.object({
   email: z.string(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  birthday: z.preprocess(
-    (value) => (typeof value === 'string' ? parseISO(value) : value),
-    z.date()
-  ),
+  // birthday: z.preprocess(
+  //   (value) => (typeof value === 'string' ? parseISO(value) : value),
+  //   z.date()
+  // ),
+  birthday: z.coerce.date(),
   address: addressSchema,
   additionalFields: additionalFieldsSchema,
 });

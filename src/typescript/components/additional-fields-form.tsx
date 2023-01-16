@@ -1,7 +1,7 @@
 import { parseISO, isValid } from 'date-fns';
 import { Formik, FormikProps } from 'formik';
 import { ChangeEventHandler } from 'react';
-import { number, z, ZodError } from 'zod';
+import { z, ZodError } from 'zod';
 import type { AdditionalFields } from '../user';
 import { DateInput } from '../../common/components/date-input';
 import { NumberInput } from '../../common/components/number-input';

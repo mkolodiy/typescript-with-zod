@@ -10,5 +10,5 @@ export const getServerSideProps: GetServerSideProps = async () => {
 };
 
 export default function Zod() {
-  return <>Typescript example</>;
+  return <>Zod example</>;
 }

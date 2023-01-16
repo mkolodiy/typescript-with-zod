@@ -41,10 +41,7 @@ export default function Users() {
   return (
     <div>
       {users.map((user) => (
-        <div
-          onClick={() => router.push(`/typescript/users/${user.id}`)}
-          key={user.id}
-        >
+        <div onClick={() => router.push(`/zod/users/${user.id}`)} key={user.id}>
           <UserCard user={user} />
         </div>
       ))}
