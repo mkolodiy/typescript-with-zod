@@ -6,11 +6,11 @@ export type Address = {
 
 export type AdditionalFields = {
   fieldNumber: number | null;
-  fieldNumberWritable: true;
+  fieldNumberWritable: boolean;
   fieldString: string | null;
-  fieldStringWritable: true;
+  fieldStringWritable: boolean;
   fieldDate: Date | null;
-  fieldDateWritable: true;
+  fieldDateWritable: boolean;
 };
 
 export type User = {
